@@ -167,6 +167,8 @@ class Conv_4(nn.Module):
         super(Conv_4, self).__init__()
 
         self.device = args.device
+        self.to(self.device)
+
         if args.dataset in ['mnist', 'fmnist']:
             img_channels = 1	  	# 1
             self.last_layer = 3 	# 3 for 3-layers - 1 for 4-layers
