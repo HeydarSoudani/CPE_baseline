@@ -16,6 +16,10 @@ class Config:
         self.device = args.device
         self.novelty_buffer_sample_rate = args.rate if self.type == 'stream' else 0.0
 
+        # I added
+        self.dropout = args.dropout
+        self.hidden_dims = args.hidden_dims
+
         # derived
         self.parameter_path = os.path.join(self.running_path, "parameter.json")
         self.log_path = os.path.join(self.running_path, "run.log")
