@@ -11,7 +11,7 @@ training_amount = 6000
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
     train_test_split = training_amount
-    path = 'dataset/fashion-mnist_stream.csv'
+    path = 'data/fmnist_stream.csv'
     dataset = None
 
     def __init__(self, for_plot=False, train=True):
