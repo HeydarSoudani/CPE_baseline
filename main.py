@@ -185,7 +185,7 @@ def stream(config, trainset, streamset):
         novelty_detector = train(trainset, plot=False)
         logger.info('---------------- initial test ----------------')
         test(stream_dataset, novelty_detector)
-        time.sleep(20)
+        time.sleep(10)
 
         novelty_dataset = dataset.NoveltyDataset(train_dataset)
         iter_streamloader = enumerate(DataLoader(dataset=stream_dataset, batch_size=1, shuffle=True))
