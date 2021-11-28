@@ -44,7 +44,7 @@ class FashionMnist(Dataset):
 class Cifar10(Dataset):
     tensor_view = (3, 32, 32)
     train_test_split = training_amount
-    path = 'dataset/cifar10_stream.csv'
+    path = 'data/cifar10_stream.csv'
     dataset = None
 
     def __init__(self, train=True):
