@@ -171,7 +171,7 @@ class Conv_4(nn.Module):
 
         if args.dataset in ['mnist', 'fmnist']:
             img_channels = 1	  	# 1
-            self.last_layer = 3 	# 3 for 3-layers - 1 for 4-layers
+            self.last_layer = 1 	# 3 for 3-layers - 1 for 4-layers
         elif args.dataset in ['cifar10', 'cifar100']:
             img_channels = 3	  	# 3 
             self.last_layer = 2 	# 4 for 3-layers - 2 for 4-layers
