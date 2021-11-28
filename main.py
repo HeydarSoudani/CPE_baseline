@@ -20,6 +20,8 @@ def stream(config, trainset, streamset):
                           number_layers=config.number_layers,
                           growth_rate=config.growth_rate,
                           drop_rate=config.drop_rate)
+    net = models.Conv_4(config)
+    
     logger.info("densenet channel: %d", net.channels)
     # net = models.CNNEncoder_2(device=torch.device(config.device))
     
@@ -251,10 +253,10 @@ def main(args):
 
   setup_logger(level=logging.DEBUG, filename=config.log_path)
 
-  if config.dataset == 'fm':
+  if config.dataset == 'fmnist':
     trainset = dataset.FashionMnist(train=True)
     testset = dataset.FashionMnist(train=False)
-  elif config.dataset == 'c10':
+  elif config.dataset == 'cifar10':
     trainset = dataset.Cifar10(train=True)
     testset = dataset.Cifar10(train=False)
   elif config.dataset == 'svhn':
@@ -293,6 +295,10 @@ if __name__ == '__main__':
   training_group.add_argument('--train', help="Whether do training process.", action="store_true")
   training_group.add_argument('-p', '--period', type=int, help="Run the whole process for how many times.", default=1)
   training_group.add_argument('-e', '--epoch', type=int, help="Epoch Number.", default=1)
+  
+  # we added
+  training_group.add_argument('--dropout', type=float, default=0.2, help='')
+  training_group.add_argument('--hidden_dims', type=int, default=128, help='') #768
 
   stream_group = arg_parser.add_argument_group(title='stream arguments')
   stream_group.add_argument('-r', '--rate', type=float, help='Novelty buffer sample rate.', default=0.3)
