@@ -22,7 +22,7 @@ def stream(config, trainset, streamset):
                           drop_rate=config.drop_rate)
     net = models.Conv_4(config)
     
-    logger.info("densenet channel: %d", net.channels)
+    # logger.info("densenet channel: %d", net.channels)
     # net = models.CNNEncoder_2(device=torch.device(config.device))
     
     # try:
