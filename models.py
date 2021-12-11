@@ -609,12 +609,34 @@ class Detector(object):
         false_negative = len(real_novelties) - len(detected_real_novelties)
         true_negative = len(self.results) - true_positive - false_positive - false_negative
 
-        cm = confusion_matrix(self.results['true_label'], self.results['predicted_label'], sorted(list(np.unique(self.results['true_label']))))
+        cm = confusion_matrix(
+            self.results['true_label'],
+            self.results['predicted_label'],
+            sorted(list(np.unique(self.results['true_label'])))
+        )
         results = self.results[np.isin(self.results['true_label'], list(self._known_labels))]
         acc = accuracy_score(results['true_label'], results['predicted_label'])
         acc_all = accuracy_score(self.results['true_label'], self.results['predicted_label'])
 
-        return true_positive, false_positive, false_negative, true_negative, cm, acc, acc_all
+
+        # == Close-World ================
+        known_results = self.results[np.isin(self.results['true_label'], list(self._known_labels))]
+        CwCA = accuracy_score(
+            known_results['true_label'],
+            known_results['predicted_label']
+        )
+
+        # == Open-World =================
+        unknown_results = self.results[np.isin(self.results['true_label'], list(self._known_labels), invert=True)]
+        unknown_results['true_label'] = -1
+        ow_results = np.concatenate((known_results, unknown_results))
+        OwCA = accuracy_score(
+            ow_results['true_label'],
+            ow_results['predicted_label']
+        )
+
+
+        return true_positive, false_positive, false_negative, true_negative, cm, acc, acc_all, CwCA, OwCA
 
     def load(self, pkl_path):
         self.__dict__.update(torch.load(pkl_path))
