@@ -159,7 +159,7 @@ def stream(config, trainset, streamset):
                 logger.debug("[test %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s",
                              i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty)
 
-        tp, fp, fn, tn, cm, acc, acc_all, CwCA, OwCA = novelty_detector.evaluate(detection_results)
+        tp, fp, fn, tn, cm, acc, acc_all = novelty_detector.evaluate(detection_results)
         precision = tp / (tp + fp + 1)
         recall = tp / (tp + fn + 1)
 
@@ -174,8 +174,6 @@ def stream(config, trainset, streamset):
         logger.info("recall: %7.4f", recall)
         print("M_new: %7.4f"% M_new)
         print("F_new: %7.4f"% F_new)
-        print("CwCA: %7.4f"% CwCA)
-        print("OwCA: %7.4f"% OwCA)
         print("Accuracy: %7.4f"% acc)
         print("Accuracy All: %7.4f"% acc_all)
         logger.info("confusion matrix: \n%s", cm)
