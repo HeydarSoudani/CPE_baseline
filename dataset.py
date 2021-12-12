@@ -8,6 +8,39 @@ from tool import Sampler
 DATASETS = {'mnist', 'fmnist', 'cifar10', 'svhn', 'cinic'}
 training_amount = 6000
 
+class Mnist(Dataset):
+    tensor_view = (1, 28, 28)
+    train_test_split = training_amount
+    path = 'data/mnist_stream.csv'
+    dataset = None
+
+    def __init__(self, for_plot=False, train=True):
+        Mnist.dataset = read_csv(self.path, sep=',', header=None).values
+
+        if for_plot:
+            dataset = Mnist.dataset[30000:33000]
+        else:
+            if train:
+                dataset = Mnist.dataset[:self.train_test_split]
+            else:
+                dataset = Mnist.dataset[self.train_test_split:]
+
+        self.data = []
+        self.train = train
+        self.label_set = set(dataset[:, -1].astype(int))
+
+        for s in dataset:
+            x = (tensor(s[:-1], dtype=torch.float) / 255).view(self.tensor_view)
+            y = tensor(s[-1], dtype=torch.long)
+            self.data.append((x, y))
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __len__(self):
+        return len(self.data)
+
+
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
     train_test_split = training_amount
