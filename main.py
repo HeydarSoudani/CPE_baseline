@@ -253,7 +253,7 @@ def main(args):
 
   setup_logger(level=logging.DEBUG, filename=config.log_path)
 
-  if config.dataset == 'fmnist':
+  if config.dataset in ['mnist', 'fmnist']:
     trainset = dataset.FashionMnist(train=True)
     testset = dataset.FashionMnist(train=False)
   elif config.dataset == 'cifar10':
