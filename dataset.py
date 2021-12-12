@@ -5,7 +5,7 @@ from pandas import read_csv
 from random import sample
 from tool import Sampler
 
-DATASETS = {'fmnist', 'cifar10', 'svhn', 'cinic'}
+DATASETS = {'mnist', 'fmnist', 'cifar10', 'svhn', 'cinic'}
 training_amount = 6000
 
 class FashionMnist(Dataset):

@@ -29,7 +29,7 @@ class Config:
         self.probs_path = os.path.join(self.running_path, "probs.pkl")
 
         # parameters
-        if self.dataset == 'fmnist':
+        if self.dataset in ['mnist', 'fmnist']:
             self.number_layers = 6
             self.growth_rate = 12
             self.learning_rate = 0.001
