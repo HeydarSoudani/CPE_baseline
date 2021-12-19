@@ -526,7 +526,8 @@ class CPELoss(nn.Module):
     def __init__(self, gamma=0.1, tao=10.0, b=1.0, beta=1.0, lambda_=0.1):
         super().__init__()
 
-        self.lambda_ = lambda_
+        # self.lambda_ = lambda_
+        self.lambda_ = 0.0
 
         self.dce = DCELoss(gamma=gamma)
         self.pairwise = PairwiseLoss(tao=tao, b=b, beta=beta)
