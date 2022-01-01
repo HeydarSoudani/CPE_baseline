@@ -267,97 +267,37 @@ class Conv_4(nn.Module):
         state_dict = torch.load(path)
         self.load_state_dict(state_dict)
 
+class MLP(nn.Module):
+  def __init__(self, n_input, n_feature, n_output, args, bias=True):
+    super(MLP, self).__init__()
+    self.device = None
 
-
-
-class CNNEncoder_2(nn.Module):
-    def __init__(self, device):
-        super(CNNEncoder_2, self).__init__()
-        self.last_layer = 2 # 3 for fmnist, 4or2 for cifar10
-        self.img_channels = 3		# 1 for fmnist, 3 for cifar10
-        self.dropout = 0.2
-        self.hidden_dims = 128
-        
-
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(self.img_channels, 32, kernel_size=5, padding=2), #input: 28 * 28 * 3, output: 28 * 28 * 32
-            # nn.ReLU(),
-            nn.PReLU(),
-            nn.Conv2d(32, 32, kernel_size=5, padding=2), #input: 28 * 28 * 3, output: 28 * 28 * 32
-            nn.BatchNorm2d(32),
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),   #input: 28 * 28 * 32, output: 14 * 14 * 32
-            nn.Dropout(self.dropout)
-        )
-
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=5, padding=2), #input: 14 * 14 * 32, output: 14 * 14 * 64
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=5, padding=2), #input: 14 * 14 * 64, output: 14 * 14 * 64
-            nn.BatchNorm2d(64),
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),   #input: 14 * 14 * 64, output: 7* 7 * 64
-            nn.Dropout(self.dropout)
-        )
-
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, padding=1), #input: 7 * 7 * 64, output: 7 * 7 * 128
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1), #input: 7 * 7 * 128, output: 7 * 7 * 128
-            nn.BatchNorm2d(128),
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),   #input: 7 * 7 * 128, output: 3* 3 * 128
-            nn.Dropout(self.dropout)
-        )
-
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(128, 256, kernel_size=3, padding=1), #input: 7 * 7 * 64, output: 7 * 7 * 128
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1), #input: 7 * 7 * 128, output: 7 * 7 * 128
-            nn.BatchNorm2d(256),
-            nn.PReLU(),
-            # nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),   #input: 7 * 7 * 128, output: 3* 3 * 128
-            nn.Dropout(self.dropout)
-        )
-
-        self.ip1 = nn.Linear(256 * self.last_layer * self.last_layer, self.hidden_dims)
-        self.preluip1 = nn.PReLU()
-        self.dropoutip1 = nn.Dropout(self.dropout)
-        self.classifier = nn.Linear(self.hidden_dims, 10)
-
-        self.device = device
-        self.to(device)
-
-    def forward(self, x):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = x.view(-1, 256 * self.last_layer * self.last_layer)
-
-        features = self.preluip1(self.ip1(x))
-        x = self.dropoutip1(features)
-        logits = self.classifier(x)
-        
-        return features, logits 
-
-
-    def save(self, path):
-        torch.save(self.state_dict(), path)
-
-    def load(self, path):
-        state_dict = torch.load(path)
-        self.load_state_dict(state_dict)
+    self.hidden = nn.Sequential(nn.Linear(n_input, 100),
+                                nn.ReLU(True),
+                                nn.Dropout(args.dropout),
+                                nn.Linear(100, n_feature),
+                                nn.ReLU(True),
+                                nn.Dropout(args.dropout))
+    self.linear = nn.Linear(n_feature, n_output, bias=bias)
+    self.hidden.apply(Xavier)
   
+  def forward(self, samples):
+    x = samples.view(samples.size(0), -1)
+    features = self.hidden(x)
+    outputs = self.linear(features)
+    return outputs, features
 
+  def to(self, *args, **kwargs):
+    self = super().to(*args, **kwargs)
+    self.device = args[0] # store device
+    return self
 
+  def save(self, path):
+    torch.save(self.state_dict(), path)
+
+  def load(self, path):
+    state_dict = torch.load(path)
+    self.load_state_dict(state_dict)
 
 class Prototypes(object):
     class Prototype:
@@ -526,8 +466,8 @@ class CPELoss(nn.Module):
     def __init__(self, gamma=0.1, tao=10.0, b=1.0, beta=1.0, lambda_=0.1):
         super().__init__()
 
-        # self.lambda_ = lambda_
-        self.lambda_ = 0.0
+        self.lambda_ = lambda_
+        # self.lambda_ = 0.0
 
         self.dce = DCELoss(gamma=gamma)
         self.pairwise = PairwiseLoss(tao=tao, b=b, beta=beta)

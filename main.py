@@ -15,12 +15,17 @@ from plot_tsne import run_plot
 def stream(config, trainset, streamset):
     logger = logging.getLogger(__name__)
 
-    net = models.DenseNet(device=torch.device(config.device),
-                          tensor_view=trainset.tensor_view,
-                          number_layers=config.number_layers,
-                          growth_rate=config.growth_rate,
-                          drop_rate=config.drop_rate)
-    net = models.Conv_4(config)
+    # net = models.DenseNet(device=torch.device(config.device),
+    #                       tensor_view=trainset.tensor_view,
+    #                       number_layers=config.number_layers,
+    #                       growth_rate=config.growth_rate,
+    #                       drop_rate=config.drop_rate)
+    
+    if config.dataset == 'mnist':
+      n_inputs, n_feature, n_outputs = 784, 100, 10
+      net = MLP(n_inputs, n_feature, n_outputs, config)
+    else:
+      net = models.Conv_4(config)
     net.to(config.device)
     # logger.info("densenet channel: %d", net.channels)
     # net = models.CNNEncoder_2(device=torch.device(config.device))
