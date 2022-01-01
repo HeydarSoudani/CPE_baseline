@@ -23,7 +23,7 @@ def stream(config, trainset, streamset):
     
     if config.dataset == 'mnist':
       n_inputs, n_feature, n_outputs = 784, 100, 10
-      net = MLP(n_inputs, n_feature, n_outputs, config)
+      net = models.MLP(n_inputs, n_feature, n_outputs, config)
     else:
       net = models.Conv_4(config)
     net.to(config.device)
