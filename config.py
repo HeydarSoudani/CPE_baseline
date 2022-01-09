@@ -23,7 +23,7 @@ class Config:
         # derived
         self.parameter_path = os.path.join(self.running_path, "parameter.json")
         self.log_path = os.path.join(self.running_path, "run.log")
-        self.net_path = os.path.join(self.running_path, "model.pkl")
+        self.net_path = os.path.join(self.running_path, "model.pt")
         self.prototypes_path = os.path.join(self.running_path, "prototypes.pkl")
         self.detector_path = os.path.join(self.running_path, "detector.pkl")
         self.probs_path = os.path.join(self.running_path, "probs.pkl")
