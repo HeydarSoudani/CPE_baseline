@@ -244,7 +244,7 @@ class Conv_4(nn.Module):
         x = self.dropoutip1(features)
         logits = self.classifier(x)
         
-        return features, logits
+        return logits, features
 
     def to(self, *args, **kwargs):
         self = super().to(*args, **kwargs)

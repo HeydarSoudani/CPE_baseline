@@ -105,10 +105,10 @@ if __name__ == '__main__':
     class_data[labels[idx]].append(sample)
 
   # == Select seen & unseen classes ==========
-  # seen_class = np.random.choice(args.class_num, args.seen_class_num, replace=False)
-  # unseen_class = [x for x in list(set(labels)) if x not in seen_class]
-  seen_class = [0, 1, 2, 3, 4] 
-  unseen_class = [5, 6, 7, 8, 9]
+  seen_class = np.random.choice(args.class_num, args.seen_class_num, replace=False)
+  unseen_class = [x for x in list(set(labels)) if x not in seen_class]
+  # seen_class = [0, 1, 2, 3, 4] 
+  # unseen_class = [5, 6, 7, 8, 9]
   print('seen: {}'.format(seen_class))
   print('unseen: {}'.format(unseen_class))
 
