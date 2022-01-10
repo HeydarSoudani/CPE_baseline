@@ -98,7 +98,7 @@ def stream(config, trainset, streamset):
             for i, (feature, label) in enumerate(dataloader):
                 feature, label = feature.to(net.device), label.to(net.device)
                 optimizer.zero_grad()
-                feature, out = net(feature)
+                out, feature = net(feature)
                 loss, distance = criterion(feature, out, label, prototypes)
 
                 loss.backward()
@@ -123,7 +123,7 @@ def stream(config, trainset, streamset):
             net.eval()
             for i, (feature, label) in enumerate(dataloader):
                 feature, label = feature.to(net.device), label.item()
-                feature, out = net(feature)
+                out, feature = net(feature)
                 closest_prototype, distance = prototypes.closest(feature, label)
                 intra_distances.append((label, distance))
 
@@ -153,7 +153,7 @@ def stream(config, trainset, streamset):
             net.eval()
             for i, (feature, label) in enumerate(dataloader):
                 feature, label = feature.to(net.device), label.item()
-                feature, out = net(feature)
+                out, feature = net(feature)
                 predicted_label, distance = models.predict(feature, prototypes)
                 prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
                 detected_novelty = novelty_detector(predicted_label, distance)
@@ -201,7 +201,7 @@ def stream(config, trainset, streamset):
             with torch.no_grad():
                 net.eval()
                 feature, label = feature.to(net.device), label.item()
-                feature, out = net(feature)
+                out, feature = net(feature)
                 predicted_label, distance = models.predict(feature, prototypes)
                 prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
                 detected_novelty = novelty_detector(predicted_label, distance)
