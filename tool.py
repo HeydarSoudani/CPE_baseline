@@ -36,7 +36,7 @@ class Sampler(object):
     def original_metric(self, d):
         feature, label = d
         feature, label = feature.to(self.net.device).unsqueeze(0), label.item()
-        feature, _ = self.net(feature)
+        _, feature = self.net(feature)
         prototype, distance = self.prototypes.closest(feature, label)
         distance = max(0.001, distance)
         score = prototype.weight / distance
@@ -48,7 +48,7 @@ class Sampler(object):
     def noval_metric(self, d):
         feature, _ = d
         feature = feature.to(self.net.device).unsqueeze(0)
-        feature, _ = self.net(feature)
+        _, feature = self.net(feature)
         prototype, score = self.prototypes.closest(feature)
         if self.use_log:
             score = max(score * 1000, 1.0001)
