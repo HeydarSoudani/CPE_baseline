@@ -11,6 +11,8 @@ from torch.utils.data import DataLoader
 # from pytorch_metric_learning import distances, losses, miners
 from plot_tsne import run_plot
 
+import numpy as np
+
 
 def stream(config, trainset, streamset):
     logger = logging.getLogger(__name__)
@@ -307,10 +309,20 @@ if __name__ == '__main__':
   # we added
   training_group.add_argument('--dropout', type=float, default=0.2, help='')
   training_group.add_argument('--hidden_dims', type=int, default=128, help='') #768
+  training_group.add_argument('--seed', type=int, default=2, help='')
 
   stream_group = arg_parser.add_argument_group(title='stream arguments')
   stream_group.add_argument('-r', '--rate', type=float, help='Novelty buffer sample rate.', default=0.3)
 
   parsed_args = arg_parser.parse_args()
+
+  ## == Apply seed =======================
+  np.random.seed(args.seed)
+  torch.manual_seed(args.seed)
+  torch.backends.cudnn.deterministic = True
+  torch.backends.cudnn.benchmark = False
+  if args.cuda:
+    torch.cuda.manual_seed_all(args.seed)
+
 
   main(parsed_args)
