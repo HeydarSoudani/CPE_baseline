@@ -16,14 +16,9 @@ def run_plot():
   model_path = './running/fm/model.pkl'
   pts_path = './running/fm/prototypes.pkl'
 
-  trainset = dataset.FashionMnist(for_plot=True)
+  trainset = dataset.FashionMnist()
   train_loader = DataLoader(dataset=trainset, batch_size=3000)
  
-  # model = models.DenseNet(device=torch.device(device),
-  #                         tensor_view=trainset.tensor_view,
-  #                         number_layers=number_layers,
-  #                         growth_rate=growth_rate,
-  #                         drop_rate=drop_rate)
   model = models.CNNEncoder(device=torch.device(device))
   model.load(model_path)
 

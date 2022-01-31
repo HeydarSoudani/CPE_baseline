@@ -8,41 +8,22 @@ import tool
 from config import Config
 from torch import optim
 from torch.utils.data import DataLoader
-# from pytorch_metric_learning import distances, losses, miners
 from plot_tsne import run_plot
-
 import numpy as np
 
+# from plot.feature_space_visualization import set_novel_label, visualization
 
 def stream(config, trainset, streamset):
     logger = logging.getLogger(__name__)
 
-    # net = models.DenseNet(device=torch.device(config.device),
-    #                       tensor_view=trainset.tensor_view,
-    #                       number_layers=config.number_layers,
-    #                       growth_rate=config.growth_rate,
-    #                       drop_rate=config.drop_rate)
-    
     if config.dataset == 'mnist':
       n_inputs, n_feature, n_outputs = 784, 100, 10
       net = models.MLP(n_inputs, n_feature, n_outputs, config)
     else:
       net = models.Conv_4(config)
     net.to(config.device)
-    # logger.info("densenet channel: %d", net.channels)
-    # net = models.CNNEncoder_2(device=torch.device(config.device))
-    
-    # try:
-    #     net.load(config.net_path)
-    # except FileNotFoundError:
-    #     pass
-    # else:
-    #     logger.info("Load model from file '%s'.", config.net_path)
 
     criterion = models.CPELoss(gamma=config.gamma, tao=config.tao, b=config.b, beta=config.beta, lambda_=config.lambda_)
-    # criterion_metric = losses.NTXentLoss(temperature=0.07)
-    # miner = miners.MultiSimilarityMiner()
-
     optimizer = optim.SGD(net.parameters(), lr=config.learning_rate, momentum=0.9)
 
     #todo
@@ -65,30 +46,6 @@ def stream(config, trainset, streamset):
     def train(train_dataset, plot=False):
         logger.info('---------------- train ----------------')
         
-        # == Train with metric loss ============
-        # dataloader = DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
-        # for epoch in range(config.epoch_number):
-        #     logger.info('---------------- epoch: %d ----------------', epoch + 1)
-
-        #     net.train()
-        #     for i, (feature, label) in enumerate(dataloader):
-        #         feature, label = feature.to(net.device), label.to(net.device)
-        #         optimizer.zero_grad()
-        #         feature, out = net(feature)
-        #         # hard_pairs = miner(feature, label)
-        #         # loss = criterion_metric(feature, label, hard_pairs)
-        #         loss.backward()
-        #         optimizer.step()
-        #         if i == 0 or (i+1) % 100 == 0:
-        #             logger.debug("[train %d, %d] %7.4f", epoch + 1, i + 1, loss.item())
-        
-
-        # net.save(config.net_path)
-        # logger.info("net has been saved.")
-        # if plot:
-        #     run_plot()
-
-
         # == Train with pt loss =================
         dataloader = DataLoader(dataset=train_dataset, batch_size=1, shuffle=True)
         for epoch in range(config.epoch_number):
@@ -192,7 +149,12 @@ def stream(config, trainset, streamset):
         novelty_detector = train(trainset, plot=False)
         logger.info('---------------- initial test ----------------')
         test(stream_dataset, novelty_detector)
-        time.sleep(10)
+
+        ### Plot t-SNE
+        # base_labels = train_dataset.label_set
+        # stream_data_novel = set_novel_label(base_labels, args)
+        # visualization(net, stream_data_novel, args, device, filename=args.vis_filename)
+
 
         novelty_dataset = dataset.NoveltyDataset(train_dataset)
         iter_streamloader = enumerate(DataLoader(dataset=stream_dataset, batch_size=1, shuffle=True))
@@ -286,9 +248,11 @@ def main(args):
   start_time = time.time()
 
   if config.type == 'stream':
-      stream(config=config, trainset=trainset, streamset=testset)
+    stream(config=config, trainset=trainset, streamset=testset)
 
   logger.info("-------------------------------- %.3fs --------------------------------", time.time() - start_time)
+
+  ### plot 
 
 
 if __name__ == '__main__':
@@ -317,12 +281,10 @@ if __name__ == '__main__':
   parsed_args = arg_parser.parse_args()
 
   ## == Apply seed =======================
-  np.random.seed(args.seed)
-  torch.manual_seed(args.seed)
+  np.random.seed(parsed_args.seed)
+  torch.manual_seed(parsed_args.seed)
   torch.backends.cudnn.deterministic = True
   torch.backends.cudnn.benchmark = False
-  if args.cuda:
-    torch.cuda.manual_seed_all(args.seed)
-
+  torch.cuda.manual_seed_all(parsed_args.seed)
 
   main(parsed_args)

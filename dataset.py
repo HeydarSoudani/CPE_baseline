@@ -14,16 +14,13 @@ class Mnist(Dataset):
     path = 'data/mnist_stream.csv'
     dataset = None
 
-    def __init__(self, for_plot=False, train=True):
+    def __init__(self, train=True):
         Mnist.dataset = read_csv(self.path, sep=',', header=None).values
 
-        if for_plot:
-            dataset = Mnist.dataset[30000:33000]
+        if train:
+            dataset = Mnist.dataset[:self.train_test_split]
         else:
-            if train:
-                dataset = Mnist.dataset[:self.train_test_split]
-            else:
-                dataset = Mnist.dataset[self.train_test_split:]
+            dataset = Mnist.dataset[self.train_test_split:]
 
         self.data = []
         self.train = train
@@ -47,16 +44,13 @@ class FashionMnist(Dataset):
     path = 'data/fmnist_stream.csv'
     dataset = None
 
-    def __init__(self, for_plot=False, train=True):
+    def __init__(self, train=True):
         FashionMnist.dataset = read_csv(self.path, sep=',', header=None).values
 
-        if for_plot:
-            dataset = FashionMnist.dataset[30000:33000]
+        if train:
+            dataset = FashionMnist.dataset[:self.train_test_split]
         else:
-            if train:
-                dataset = FashionMnist.dataset[:self.train_test_split]
-            else:
-                dataset = FashionMnist.dataset[self.train_test_split:]
+            dataset = FashionMnist.dataset[self.train_test_split:]
 
         self.data = []
         self.train = train
