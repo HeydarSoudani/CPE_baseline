@@ -570,8 +570,16 @@ class Detector(object):
         acc = accuracy_score(results['true_label'], results['predicted_label'])
         acc_all = accuracy_score(self.results['true_label'], self.results['predicted_label'])
 
+        
+        ## === Accuracy on new classes =====
+        unknown_results = results[np.isin(self.results['true_label'], list(self._known_labels), invert=True)]
+        NCA = accuracy_score(
+            unknown_results['true_label'],
+            unknown_results['predicted_label']
+        )
 
-        return true_positive, false_positive, false_negative, true_negative, cm, acc, acc_all
+
+        return true_positive, false_positive, false_negative, true_negative, cm, acc, acc_all, NCA
 
     def load(self, pkl_path):
         self.__dict__.update(torch.load(pkl_path))
