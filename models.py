@@ -572,12 +572,12 @@ class Detector(object):
 
         
         ## === Accuracy on new classes =====
-        unknown_results = results[np.isin(self.results['true_label'], list(self._known_labels), invert=True)]
-        NCA = accuracy_score(
-            unknown_results['true_label'],
-            unknown_results['predicted_label']
-        )
-
+        # unknown_results = results[np.isin(self.results['true_label'], list(self._known_labels), invert=True)]
+        # NCA = accuracy_score(
+        #     unknown_results['true_label'],
+        #     unknown_results['predicted_label']
+        # )
+        NCA = 0.0
 
         return true_positive, false_positive, false_negative, true_negative, cm, acc, acc_all, NCA
 
