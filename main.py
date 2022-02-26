@@ -190,8 +190,9 @@ def stream(config, trainset, streamset):
           if detected_novelty:
             buffer.append(sample)
 
-          logger.debug("[stream %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s, %4d",
-                        i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty, len(buffer))
+          if (i+1) % 500 == 0:
+            logger.debug("[stream %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s, %4d",
+                          i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty, len(buffer))
 
           if len(buffer) == 1000:
             ## === in stream evaluation ========== 
