@@ -6,21 +6,16 @@ from random import sample
 from tool import Sampler
 
 DATASETS = {'mnist', 'fmnist', 'cifar10', 'svhn', 'cinic'}
-training_amount = 6000
 
 class Mnist(Dataset):
     tensor_view = (1, 28, 28)
-    train_test_split = training_amount
-    path = 'data/mnist_stream.csv'
-    dataset = None
-
     def __init__(self, train=True):
-        Mnist.dataset = read_csv(self.path, sep=',', header=None).values
-
         if train:
-            dataset = Mnist.dataset[:self.train_test_split]
+            path = 'data/mnist_train.csv'
+            dataset = read_csv(path, sep=',', header=None).values
         else:
-            dataset = Mnist.dataset[self.train_test_split:]
+            path = 'data/mnist_stream.csv'
+            dataset = read_csv(path, sep=',', header=None).values
 
         self.data = []
         self.train = train
@@ -41,17 +36,13 @@ class Mnist(Dataset):
 
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
-    train_test_split = training_amount
-    path = 'data/fmnist_stream.csv'
-    dataset = None
-
     def __init__(self, train=True):
-        FashionMnist.dataset = read_csv(self.path, sep=',', header=None).values
-
         if train:
-            dataset = FashionMnist.dataset[:self.train_test_split]
+            path = 'data/mnist_train.csv'
+            dataset = read_csv(path, sep=',', header=None).values
         else:
-            dataset = FashionMnist.dataset[self.train_test_split:]
+            path = 'data/mnist_stream.csv'
+            dataset = read_csv(path, sep=',', header=None).values
 
         self.data = []
         self.train = train
