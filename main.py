@@ -111,19 +111,20 @@ def stream(config, trainset, streamset):
         detection_results = []
 
         with torch.no_grad():
-            net.eval()
-            for i, (feature, label) in enumerate(dataloader):
-                feature, label = feature.to(net.device), label.item()
-                out, feature = net(feature)
-                predicted_label, distance = models.predict(feature, prototypes)
-                prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
-                detected_novelty = novelty_detector(predicted_label, distance)
-                real_novelty = label not in novelty_detector.known_labels
+          net.eval()
+          for i, (feature, label) in enumerate(dataloader):
+            feature, label = feature.to(net.device), label.item()
+            out, feature = net(feature)
+            predicted_label, distance = models.predict(feature, prototypes)
+            prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
+            detected_novelty = novelty_detector(predicted_label, distance)
+            real_novelty = label not in novelty_detector.known_labels
 
-                detection_results.append((label, predicted_label, real_novelty, detected_novelty))
-
-                logger.debug("[test %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s",
-                             i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty)
+            detection_results.append((label, predicted_label, real_novelty, detected_novelty))
+            
+            if (i+1) % 1000 == 0:
+              logger.debug("[test %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s",
+                          i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty)
 
         tp, fp, fn, tn, cm, acc, acc_all, NCA = novelty_detector.evaluate(detection_results)
         precision = tp / (tp + fp + 1)
@@ -158,13 +159,20 @@ def stream(config, trainset, streamset):
         # stream_data_novel = set_novel_label(base_labels, args)
         # visualization(net, stream_data_novel, args, device, filename=args.vis_filename)
 
+        f = open('output.txt', 'w')
+        labels = stream_dataset.labels
+        label_set = stream_dataset.label_set
+        for label in label_set:
+          start_point = np.where(labels == label)[0][0]
+          print('Class {} starts at {}'.format(label, start_point))
+          f.write("[Class %5d], Start point: %5d \n" % (label, start_point))
+
         novelty_dataset = dataset.NoveltyDataset(train_dataset)
         iter_streamloader = enumerate(DataLoader(dataset=stream_dataset, batch_size=1, shuffle=True))
         buffer = []
         detection_results = []
         last_idx = 0
 
-        f = open('output.txt', 'w')
         for i, (feature, label) in iter_streamloader:
           sample = (feature.squeeze(dim=0), label.squeeze(dim=0))
           with torch.no_grad():
@@ -177,7 +185,7 @@ def stream(config, trainset, streamset):
             real_novelty = label not in novelty_detector.known_labels
 
             # append to 
-            detection_results.append((label.item(), predicted_label, real_novelty, detected_novelty))
+            detection_results.append((label, predicted_label, real_novelty, detected_novelty))
 
           if detected_novelty:
             buffer.append(sample)
