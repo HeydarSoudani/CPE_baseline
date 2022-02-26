@@ -114,34 +114,34 @@ class SVHN(Dataset):
         return len(self.data)
 
 
-class Cinic(Dataset):
-    tensor_view = (3, 32, 32)
-    train_test_split = training_amount
-    path = 'dataset/cinic_stream.csv'
-    dataset = None
+# class Cinic(Dataset):
+#     tensor_view = (3, 32, 32)
+#     train_test_split = training_amount
+#     path = 'dataset/cinic_stream.csv'
+#     dataset = None
 
-    def __init__(self, train=True):
-        Cinic.dataset = read_csv(self.path, sep=',', header=None).values
+#     def __init__(self, train=True):
+#         Cinic.dataset = read_csv(self.path, sep=',', header=None).values
 
-        if train:
-            dataset = Cinic.dataset[:self.train_test_split]
-        else:
-            dataset = Cinic.dataset[self.train_test_split:]
+#         if train:
+#             dataset = Cinic.dataset[:self.train_test_split]
+#         else:
+#             dataset = Cinic.dataset[self.train_test_split:]
 
-        self.data = []
-        self.train = train
-        self.label_set = set(dataset[:, -1].astype(int))
+#         self.data = []
+#         self.train = train
+#         self.label_set = set(dataset[:, -1].astype(int))
 
-        for s in dataset:
-            x = (tensor(s[:-1], dtype=torch.float) / 255).view(self.tensor_view)
-            y = tensor(s[-1], dtype=torch.long)
-            self.data.append((x, y))
+#         for s in dataset:
+#             x = (tensor(s[:-1], dtype=torch.float) / 255).view(self.tensor_view)
+#             y = tensor(s[-1], dtype=torch.long)
+#             self.data.append((x, y))
 
-    def __getitem__(self, index):
-        return self.data[index]
+#     def __getitem__(self, index):
+#         return self.data[index]
 
-    def __len__(self):
-        return len(self.data)
+#     def __len__(self):
+#         return len(self.data)
 
 
 class NoveltyDataset(Dataset):
