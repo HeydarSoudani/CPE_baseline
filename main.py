@@ -11,6 +11,8 @@ from torch.utils.data import DataLoader
 from plot_tsne import run_plot
 import numpy as np
 
+from evaluation import in_stream_evaluation
+
 # from plot.feature_space_visualization import set_novel_label, visualization
 
 def stream(config, trainset, streamset):
@@ -156,40 +158,77 @@ def stream(config, trainset, streamset):
         # stream_data_novel = set_novel_label(base_labels, args)
         # visualization(net, stream_data_novel, args, device, filename=args.vis_filename)
 
-
         novelty_dataset = dataset.NoveltyDataset(train_dataset)
         iter_streamloader = enumerate(DataLoader(dataset=stream_dataset, batch_size=1, shuffle=True))
         buffer = []
+        detection_results = []
+        last_idx = 0
 
+        f = open('output.txt', 'w')
         for i, (feature, label) in iter_streamloader:
-            sample = (feature.squeeze(dim=0), label.squeeze(dim=0))
-            with torch.no_grad():
-                net.eval()
-                feature, label = feature.to(net.device), label.item()
-                out, feature = net(feature)
-                predicted_label, distance = models.predict(feature, prototypes)
-                prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
-                detected_novelty = novelty_detector(predicted_label, distance)
-                real_novelty = label not in novelty_detector.known_labels
+          sample = (feature.squeeze(dim=0), label.squeeze(dim=0))
+          with torch.no_grad():
+            net.eval()
+            feature, label = feature.to(net.device), label.item()
+            out, feature = net(feature)
+            predicted_label, distance = models.predict(feature, prototypes)
+            prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
+            detected_novelty = novelty_detector(predicted_label, distance)
+            real_novelty = label not in novelty_detector.known_labels
 
-            if detected_novelty:
-                buffer.append(sample)
+            # append to 
+            detection_results.append((label.item(), predicted_label, real_novelty, detected_novelty))
 
-            logger.debug("[stream %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s, %4d",
-                         i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty, len(buffer))
+          if detected_novelty:
+            buffer.append(sample)
 
-            if len(buffer) == 1000:
-                logger.info("novelty dataset size before extending: %d", len(novelty_dataset))
+          logger.debug("[stream %5d]: %d, %d, %7.4f, %7.4f, %5s, %5s, %4d",
+                        i + 1, label, predicted_label, prob, distance, real_novelty, detected_novelty, len(buffer))
 
-                # todo try different sample methods by YW.
-                # novelty_dataset.extend(buffer, config.novelty_buffer_sample_rate)
+          if len(buffer) == 1000:
+            ## === in stream evaluation ========== 
+            sample_num = i-last_idx
 
-                novelty_dataset.extend_by_select(buffer, config.novelty_buffer_sample_rate, prototypes, net, soft, use_log)
+            CwCA, M_new, F_new, cm, acc_per_class = in_stream_evaluation(
+              detection_results, novelty_detector.known_labels)
+            print("[On %5d samples]: %7.4f, %7.4f, %7.4f" %
+                  (sample_num, CwCA, M_new, F_new))
+            print("confusion matrix: \n%s\n" % cm)
+            print("acc per class: %s\n" % acc_per_class)
+            f.write("[In sample %2d], [On %5d samples]: %7.4f, %7.4f, %7.4f \n" %
+                    (i, sample_num, CwCA, M_new, F_new))
+            f.write("acc per class: %s\n" % acc_per_class)
+            # =
+            detection_results.clear()
+            last_idx = i
+            
 
-                logger.info("novelty dataset size after extending: %d", len(novelty_dataset))
-                logger.info('---------------- incremental train ----------------')
-                novelty_detector = train(novelty_dataset)
-                buffer.clear()
+            logger.info("novelty dataset size before extending: %d", len(novelty_dataset))
+            # todo try different sample methods by YW.
+            # novelty_dataset.extend(buffer, config.novelty_buffer_sample_rate)
+            novelty_dataset.extend_by_select(buffer, config.novelty_buffer_sample_rate, prototypes, net, soft, use_log)
+
+            logger.info("novelty dataset size after extending: %d", len(novelty_dataset))
+            logger.info('---------------- incremental train ----------------')
+            novelty_detector = train(novelty_dataset)
+
+            buffer.clear()
+        
+        # == Last evaluation ========================
+        sample_num = i-last_idx
+        CwCA, M_new, F_new, cm, acc_per_class = in_stream_evaluation(
+          detection_results, novelty_detector.known_labels)
+        print("[On %5d samples]: %7.4f, %7.4f, %7.4f" %
+              (sample_num, CwCA, M_new, F_new))
+        print("confusion matrix: \n%s\n" % cm)
+        print("acc per class: %s\n" % acc_per_class)
+        f.write("[In sample %2d], [On %5d samples]: %7.4f, %7.4f, %7.4f \n" %
+                (i, sample_num, CwCA, M_new, F_new))
+        f.write("acc per class: %s\n" % acc_per_class)
+        
+        # =
+        detection_results.clear()
+        last_idx = i
 
         return novelty_detector
 
