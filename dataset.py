@@ -46,7 +46,8 @@ class FashionMnist(Dataset):
 
         self.data = []
         self.train = train
-        self.label_set = set(dataset[:, -1].astype(int))
+        self.labels = dataset[:, -1].astype(int)
+        self.label_set = set(self.labels)
 
         for s in dataset:
             x = (tensor(s[:-1], dtype=torch.float) / 255).view(self.tensor_view)
