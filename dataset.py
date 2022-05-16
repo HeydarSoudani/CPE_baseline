@@ -38,9 +38,9 @@ class Mnist(Dataset):
 
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
-    def __init__(self, dataset=None, train=True):
+    def __init__(self, dataset=[], train=True):
         
-        if dataset == None:
+        if dataset == []:
             if train:
                 path = 'data/fmnist_train.csv'
                 dataset = read_csv(path, sep=',', header=None).values
