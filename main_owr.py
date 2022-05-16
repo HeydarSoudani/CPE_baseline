@@ -66,7 +66,7 @@ def owr(memory, config):
 
             loss.backward()
             optimizer.step()
-            if i == 0 or (i+1) % 100 == 0:
+            if i == 0 or (i+1) % 500 == 0:
                 logger.debug("[train %d, %d] %7.4f %7.4f", epoch + 1, i + 1, loss.item(), distance)
 
         logger.info("prototypes count after training: %d", len(prototypes))
