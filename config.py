@@ -11,7 +11,8 @@ class Config:
         self.type = args.type
         self.train = args.train
         self.period = args.period if args.train else 1
-        self.epoch_number = args.epoch if args.train else 1
+        # self.epoch_number = args.epoch if args.train else 1
+        self.epoch_number = args.epoch
         self.dataset = args.dataset
         self.device = args.device
         self.novelty_buffer_sample_rate = args.rate if self.type == 'stream' else 0.0
