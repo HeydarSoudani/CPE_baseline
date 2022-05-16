@@ -17,7 +17,7 @@ from evaluation import in_stream_evaluation
 from added_components.memory_selector import IncrementalMemory
 
 
-def owr(memory, config, trainset, testset):
+def owr(memory, config):
   logger = logging.getLogger(__name__)
   
   if config.dataset == 'mnist':
@@ -47,7 +47,6 @@ def owr(memory, config, trainset, testset):
 
   detector = None
 
-  
   def train(train_dataset, plot=False):
     logger.info('---------------- train ----------------')
     
@@ -182,11 +181,14 @@ def owr(memory, config, trainset, testset):
       trainset = dataset.Mnist(dataset=train_data)
       testset = dataset.Mnist(dataset=test_data)
     elif config.dataset == 'fmnist':
-      trainset = dataset.FashionMnist(train=True)
-      testset = dataset.FashionMnist(train=False)
+      trainset = dataset.FashionMnist(dataset=train_data)
+      testset = dataset.FashionMnist(dataset=test_data)
     elif config.dataset == 'cifar10':
       trainset = dataset.Cifar10(train=True)
       testset = dataset.Cifar10(train=False)
+    
+    logger.info("trainset size: %d", len(trainset))
+    logger.info("testset size: %d", len(testset))
 
     
     novelty_detector = train(trainset, plot=False)
@@ -217,28 +219,8 @@ def main(args):
 
   setup_logger(level=logging.DEBUG, filename=config.log_path)
 
-  if config.dataset  == 'mnist':
-    trainset = dataset.Mnist(train=True)
-    testset = dataset.Mnist(train=False)
-  elif config.dataset == 'fmnist':
-    trainset = dataset.FashionMnist(train=True)
-    testset = dataset.FashionMnist(train=False)
-  elif config.dataset == 'cifar10':
-    trainset = dataset.Cifar10(train=True)
-    testset = dataset.Cifar10(train=False)
-  elif config.dataset == 'svhn':
-    trainset = dataset.SVHN(train=True)
-    testset = dataset.SVHN(train=False)
-  elif config.dataset == 'cinic':
-    trainset = dataset.Cinic(train=True)
-    testset = dataset.Cinic(train=False)
-  else:
-    raise ValueError("Dataset '{}' not found.".format(config.dataset))
-
   logger.info("****************************************************************")
   logger.info("%s", config)
-  logger.info("trainset size: %d", len(trainset))
-  logger.info("testset size: %d", len(testset))
 
   ## == Add memory ===============
   memory = IncrementalMemory(
@@ -249,7 +231,8 @@ def main(args):
 
   start_time = time.time()
 
-  owr(memory, config=config, trainset=trainset, streamset=testset)
+  if config.type == 'owr':
+    owr(memory, config=config)
 
   logger.info("-------------------------------- %.3fs --------------------------------", time.time() - start_time)
 
@@ -260,7 +243,7 @@ if __name__ == '__main__':
   arg_parser = argparse.ArgumentParser(prog="CPE")
 
   argument_group = arg_parser.add_argument_group(title='arguments')
-  argument_group.add_argument('-t', '--type', type=str, help="Running type.", choices=['ce', 'cpe', 'stream'], required=True)
+  argument_group.add_argument('-t', '--type', type=str, help="Running type.", choices=['ce', 'cpe', 'stream', 'owr'], required=True)
   argument_group.add_argument('-d', '--dir', type=str, help="Running directory path.", required=True)
   argument_group.add_argument('--dataset', type=str, help="Dataset.", choices=dataset.DATASETS, required=True)
   argument_group.add_argument('--device', type=str, help="Torch device.", default='cpu', choices=['cpu', 'cuda:0', 'cuda:1', 'cuda:2', 'cuda:3'])
