@@ -9,13 +9,15 @@ DATASETS = {'mnist', 'fmnist', 'cifar10', 'svhn', 'cinic'}
 
 class Mnist(Dataset):
     tensor_view = (1, 28, 28)
-    def __init__(self, train=True):
-        if train:
-            path = 'data/mnist_train.csv'
-            dataset = read_csv(path, sep=',', header=None).values
-        else:
-            path = 'data/mnist_stream.csv'
-            dataset = read_csv(path, sep=',', header=None).values
+    def __init__(self, dataset=None, train=True):
+        
+        if dataset == None:
+            if train:
+                path = 'data/mnist_train.csv'
+                dataset = read_csv(path, sep=',', header=None).values
+            else:
+                path = 'data/mnist_stream.csv'
+                dataset = read_csv(path, sep=',', header=None).values
 
         self.data = []
         self.train = train
@@ -36,7 +38,7 @@ class Mnist(Dataset):
 
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
-    def __init__(self, train=True):
+    def __init__(self, dataset=None, train=True):
         if train:
             path = 'data/fmnist_train.csv'
             dataset = read_csv(path, sep=',', header=None).values
