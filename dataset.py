@@ -68,8 +68,8 @@ class FashionMnist(Dataset):
 class Cifar10(Dataset):
     tensor_view = (3, 32, 32)
 
-    def __init__(self, dataset=None, train=True):
-        if dataset == None:
+    def __init__(self, dataset=[], train=True):
+        if dataset == []:
             if train:
                 path = 'data/cifar10_train.csv'
                 dataset = read_csv(path, sep=',', header=None).values

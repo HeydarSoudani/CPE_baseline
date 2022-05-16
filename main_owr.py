@@ -185,8 +185,8 @@ def owr(memory, config):
       trainset = dataset.FashionMnist(dataset=train_data)
       testset = dataset.FashionMnist(dataset=test_data)
     elif config.dataset == 'cifar10':
-      trainset = dataset.Cifar10(train=True)
-      testset = dataset.Cifar10(train=False)
+      trainset = dataset.Cifar10(dataset=train_data)
+      testset = dataset.Cifar10(dataset=test_data)
     
     logger.info("trainset size: %d", len(trainset))
     logger.info("testset size: %d", len(testset))
