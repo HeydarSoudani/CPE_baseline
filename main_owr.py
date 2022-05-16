@@ -132,8 +132,8 @@ def owr(memory, config):
       precision = tp / (tp + fp + 1)
       recall = tp / (tp + fn + 1)
 
-      M_new = fn / (tp + fn + 1)
-      F_new = fp / (fp + tn + 1)
+      M_new = fn / (tp + fn + 1e-8)
+      F_new = fp / (fp + tn + 1e-8)
 
       logger.info("true positive: %d", tp)
       logger.info("false positive: %d", fp)
@@ -141,11 +141,12 @@ def owr(memory, config):
       logger.info("true negative: %d", tn)
       logger.info("precision: %7.4f", precision)
       logger.info("recall: %7.4f", recall)
-      print("M_new: %7.4f"% M_new)
-      print("F_new: %7.4f"% F_new)
-      print("Accuracy: %7.4f"% acc)
-      print("Accuracy All: %7.4f"% acc_all)
-      print("New Class Accuracy: %7.4f"% NCA)
+      # print("M_new: %7.4f"% M_new)
+      # print("F_new: %7.4f"% F_new)
+      # print("Accuracy: %7.4f"% acc)
+      # print("Accuracy All: %7.4f"% acc_all)
+      # print("New Class Accuracy: %7.4f"% NCA)
+      print("Evaluation: %7.2f, %7.2f, %7.2f"%(acc*100, M_new*100, F_new*100))
       logger.info("confusion matrix: \n%s", cm)
 
   for current_task in range(config.n_tasks):  
