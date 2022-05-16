@@ -265,8 +265,7 @@ if __name__ == '__main__':
   training_group.add_argument('--mem_total_size', type=int, default=2000, help='')
   training_group.add_argument('--mem_per_class', type=int, default=100, help='')
   training_group.add_argument('--mem_sel_method', type=str, default='rand', choices=['rand', 'soft_rand'], help='')
-  training_group.add_argument('--mem_novel_acceptance', type=int, default=150, help='')
-
+  
   stream_group = arg_parser.add_argument_group(title='stream arguments')
   stream_group.add_argument('-r', '--rate', type=float, help='Novelty buffer sample rate.', default=0.3)
 

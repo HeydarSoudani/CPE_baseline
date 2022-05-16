@@ -20,6 +20,12 @@ class Config:
         self.dropout = args.dropout
         self.hidden_dims = args.hidden_dims
 
+        # I added for memory
+        self.mem_sel_type = args.mem_sel_type
+        self.mem_total_size = args.mem_total_size
+        self.mem_per_class = args.mem_per_class
+        self.mem_per_class = args.mem_per_class
+
         # derived
         self.parameter_path = os.path.join(self.running_path, "parameter.json")
         self.log_path = os.path.join(self.running_path, "run.log")
