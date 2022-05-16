@@ -564,7 +564,7 @@ class Detector(object):
         cm = confusion_matrix(
             self.results['true_label'],
             self.results['predicted_label'],
-            sorted(list(np.unique(self.results['true_label'])))
+            labels=sorted(list(np.unique(self.results['true_label'])))
         )
         results = self.results[np.isin(self.results['true_label'], list(self._known_labels))]
         acc = accuracy_score(results['true_label'], results['predicted_label'])
