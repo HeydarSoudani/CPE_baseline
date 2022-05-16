@@ -39,12 +39,14 @@ class Mnist(Dataset):
 class FashionMnist(Dataset):
     tensor_view = (1, 28, 28)
     def __init__(self, dataset=None, train=True):
-        if train:
-            path = 'data/fmnist_train.csv'
-            dataset = read_csv(path, sep=',', header=None).values
-        else:
-            path = 'data/fmnist_stream.csv'
-            dataset = read_csv(path, sep=',', header=None).values
+        
+        if dataset == None:
+            if train:
+                path = 'data/fmnist_train.csv'
+                dataset = read_csv(path, sep=',', header=None).values
+            else:
+                path = 'data/fmnist_stream.csv'
+                dataset = read_csv(path, sep=',', header=None).values
 
         self.data = []
         self.train = train
@@ -66,13 +68,14 @@ class FashionMnist(Dataset):
 class Cifar10(Dataset):
     tensor_view = (3, 32, 32)
 
-    def __init__(self, train=True):
-        if train:
-            path = 'data/cifar10_train.csv'
-            dataset = read_csv(path, sep=',', header=None).values
-        else:
-            path = 'data/cifar10_stream.csv'
-            dataset = read_csv(path, sep=',', header=None).values
+    def __init__(self, dataset=None, train=True):
+        if dataset == None:
+            if train:
+                path = 'data/cifar10_train.csv'
+                dataset = read_csv(path, sep=',', header=None).values
+            else:
+                path = 'data/cifar10_stream.csv'
+                dataset = read_csv(path, sep=',', header=None).values
 
         self.data = []
         self.train = train
