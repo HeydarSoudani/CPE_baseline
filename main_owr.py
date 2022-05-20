@@ -15,6 +15,7 @@ from config import Config
 from plot_tsne import run_plot
 from evaluation import in_stream_evaluation
 from added_components.memory_selector import IncrementalMemory
+from plot.feature_space_visualization import set_novel_label, visualization
 
 
 def owr(memory, config):
@@ -194,6 +195,21 @@ def owr(memory, config):
     
     novelty_detector = train(trainset, plot=False)
     test(testset, novelty_detector)
+
+    ## == Plot ==================
+    print('-- Ploting ... ----')
+    known_labels = set(np.arange((current_task+1)*2))
+    n_label = len(known_labels) if current_task == config.n_tasks-1 else len(known_labels)+1
+
+    new_test_data = set_novel_label(known_labels, config, data=test_data)
+    visualization(
+      net,
+      new_test_data,
+      config,
+      'tsne_taks_{}'.format(current_task),
+      n_label=n_label
+    )
+    print('--- Plot done! ---')
 
     ### === Update memoty ===================
     memory.update(task_data)
