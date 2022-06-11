@@ -380,7 +380,8 @@ class Prototypes(object):
         if prototype.label not in self._dict:
             self._dict[prototype.label] = []
 
-        self._dict[prototype.label].append(prototype)
+        # self._dict[prototype.label].append(prototype)
+        self._dict[prototype.label]= [prototype]  # 1 prototype per label
 
     def cat(self, label=None):
         collection = self._list if label is None else self._dict[label]
