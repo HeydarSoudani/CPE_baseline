@@ -312,10 +312,10 @@ class MLP(nn.Module):
 
 class Prototypes(object):
     class Prototype:
-        def __init__(self, feature, label):
+        def __init__(self, feature, label, weight=1):
             self.feature = feature
             self.label = label
-            self.weight = 1
+            self.weight = weight
 
         @property
         def id(self):
@@ -377,15 +377,14 @@ class Prototypes(object):
     def _append(self, prototype):
         
         # Orginal
-        # self._list.append(prototype)
-        # if prototype.label not in self._dict:
-        #     self._dict[prototype.label] = []
-        # self._dict[prototype.label].append(prototype)
+        self._list.append(prototype)
+        if prototype.label not in self._dict:
+            self._dict[prototype.label] = []
+        self._dict[prototype.label].append(prototype)
         
         # For one prototype
-        # if prototype.label not in self._dict:
-        self._dict[prototype.label] = [prototype]
-        self._list = [item[0] for item in list(self._dict.values())]
+        # self._dict[prototype.label] = [prototype]
+        # self._list = [item[0] for item in list(self._dict.values())]
 
     def cat(self, label=None):
         collection = self._list if label is None else self._dict[label]
@@ -396,14 +395,33 @@ class Prototypes(object):
         self._dict.clear()
 
     def update(self):
+        # Orginal
         temp_list = self._list
         self._list = list()
         self._dict = dict()
-
         for p in temp_list:
             if p.weight > 1:
                 p.weight = ceil(p.weight / 2)
                 self._append(p)
+        
+
+        # For one prototype
+        temp_dict = self._dict
+        self._list = list()
+        self._dict = dict()
+        for label, pt_list in temp_dict.items():
+            new_weight = 0
+            all_features = []
+            for pt in pt_list:
+                new_weight += pt.weight
+                all_features.append(pt.feature)
+            
+            print(all_features[0].shape)
+            new_prototype = Prototypes.Prototype(feature, label, new_weight)
+            self._dict[label] = [new_prototype]
+        self._list = [item[0] for item in list(self._dict.values())]
+
+
 
     def load(self, pkl_path):
         self.__dict__.update(torch.load(pkl_path))
