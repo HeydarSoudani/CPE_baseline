@@ -18,7 +18,7 @@ class Config:
         self.novelty_buffer_sample_rate = args.rate if self.type == 'stream' else 0.0
 
         # I added
-        self.n_tasks = args.n_tasks
+        # self.n_tasks = args.n_tasks
         self.dropout = args.dropout
         self.hidden_dims = args.hidden_dims
 
