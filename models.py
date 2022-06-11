@@ -375,13 +375,17 @@ class Prototypes(object):
         return closest_prototype, distance
 
     def _append(self, prototype):
-        self._list.append(prototype)
-
-        if prototype.label not in self._dict:
-            self._dict[prototype.label] = []
-
+        
+        # Orginal
+        # self._list.append(prototype)
+        # if prototype.label not in self._dict:
+        #     self._dict[prototype.label] = []
         # self._dict[prototype.label].append(prototype)
-        self._dict[prototype.label]= [prototype]  # 1 prototype per label
+        
+        # For one prototype
+        if prototype.label not in self._dict:
+            self._dict[prototype.label] = [prototype]
+            self._list.append(prototype)
 
     def cat(self, label=None):
         collection = self._list if label is None else self._dict[label]
