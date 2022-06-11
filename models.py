@@ -404,7 +404,6 @@ class Prototypes(object):
                 p.weight = ceil(p.weight / 2)
                 self._append(p)
         
-
         # For one prototype
         temp_dict = self._dict
         self._list = list()
@@ -415,9 +414,9 @@ class Prototypes(object):
             for pt in pt_list:
                 new_weight += pt.weight
                 all_features.append(pt.feature)
-            
-            print(all_features[0].shape)
-            new_prototype = Prototypes.Prototype(feature, label, new_weight)
+             
+            new_feature = torch.mean(torch.cat(all_features), dim=0).reshape(1, -1)
+            new_prototype = Prototypes.Prototype(new_feature, label, new_weight)
             self._dict[label] = [new_prototype]
         self._list = [item[0] for item in list(self._dict.values())]
 
