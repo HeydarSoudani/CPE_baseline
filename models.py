@@ -383,9 +383,9 @@ class Prototypes(object):
         # self._dict[prototype.label].append(prototype)
         
         # For one prototype
-        if prototype.label not in self._dict:
-            self._dict[prototype.label] = [prototype]
-            self._list.append(prototype)
+        # if prototype.label not in self._dict:
+        self._dict[prototype.label] = [prototype]
+        self._list = [item[0] for item in list(self._dict.values())]
 
     def cat(self, label=None):
         collection = self._list if label is None else self._dict[label]
