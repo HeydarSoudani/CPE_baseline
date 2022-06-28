@@ -32,21 +32,63 @@ def set_novel_label(known_labels, args, data=[]):
 
 
 def tsne_plot(features, labels, file_name='tsne', n_color=6):
+  # tsne = TSNE()
+  # X_embedded = tsne.fit_transform(features)
+
+  # sns.set(rc={'figure.figsize':(11.7,8.27)})
+  # palette = sns.color_palette("bright", n_color)
+  # sns.scatterplot(
+  #   x=X_embedded[:,0],
+  #   y=X_embedded[:,1],
+  #   hue=labels,
+  #   legend='full',
+  #   palette=palette
+  # )
+
+  # plt.savefig('{}.png'.format(file_name))
+  # # plt.show()
+  # plt.clf()
+
+
+  colors = [
+    'royalblue', 'forestgreen',
+    'darkorchid', 'brown',
+    'gold', 'red',
+    'darkcyan', 'greenyellow',
+    'peru',
+    'hotpink'
+  ]
+  
   tsne = TSNE()
   X_embedded = tsne.fit_transform(features)
+  
+  # fig, ax = plt.subplots()
+  plt_colors = np.array([colors[9] if i==100 else colors[i] for i in labels])
+  # plt_labels = np.array(['Novel' if i==100 else i for i in labels])
+  plt_labels = np.unique(np.array(labels))
+  plt.tick_params(
+    left=False,
+    labelleft=False,
+    bottom = False,
+    labelbottom=False
+  )
 
-  sns.set(rc={'figure.figsize':(11.7,8.27)})
-  palette = sns.color_palette("bright", n_color)
-  sns.scatterplot(
-    x=X_embedded[:,0],
-    y=X_embedded[:,1],
-    hue=labels,
-    legend='full',
-    palette=palette
+  for idx, label in enumerate(plt_labels):  
+    plt.scatter(
+      X_embedded[np.where(labels==label)[0], 0],
+      X_embedded[np.where(labels==label)[0], 1],
+      marker='o',
+      c= colors[9] if label==100 else colors[idx],
+      label= 'Novel' if label==100 else str(idx),
+    )
+
+  plt.legend(
+    loc="upper right",
+    title="Classes",
+    fontsize=9
   )
 
   plt.savefig('{}.png'.format(file_name))
-  # plt.show()
   plt.clf()
 
 

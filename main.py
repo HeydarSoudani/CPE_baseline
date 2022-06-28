@@ -173,12 +173,11 @@ def stream(config, trainset, streamset):
         detection_results = []
         last_idx = 0
 
-        for i, (feature, label) in iter_streamloader:
-          sample = (feature.squeeze(dim=0), label.squeeze(dim=0))
+        for i, (image, label) in iter_streamloader:
           with torch.no_grad():
             net.eval()
-            feature, label = feature.to(net.device), label.item()
-            out, feature = net(feature)
+            image, label = image.to(net.device), label.item()
+            out, feature = net(image)
             predicted_label, distance = models.predict(feature, prototypes)
             prob = models.probability(feature, predicted_label, prototypes, gamma=config.gamma)
             detected_novelty = novelty_detector(predicted_label, distance)
@@ -188,6 +187,7 @@ def stream(config, trainset, streamset):
             detection_results.append((label, predicted_label, real_novelty, detected_novelty))
 
           if detected_novelty:
+            sample = (image.squeeze(dim=0), label.squeeze(dim=0), feature)
             buffer.append(sample)
 
           if (i+1) % 500 == 0:

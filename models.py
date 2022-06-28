@@ -91,7 +91,6 @@ class DenseBlock(nn.Module):
     def forward(self, x):
         return self.layer(x)
 
-
 class DenseNet(nn.Module):
     def __init__(self, device, tensor_view, number_layers=6, growth_rate=12, reduction=2, bottleneck=True, drop_rate=0.0):
         super(DenseNet, self).__init__()
@@ -161,7 +160,6 @@ class DenseNet(nn.Module):
     def load(self, path):
         state_dict = torch.load(path)
         self.load_state_dict(state_dict)
-
 
 class Conv_4(nn.Module):
     def __init__(self, args):
@@ -405,20 +403,20 @@ class Prototypes(object):
                 self._append(p)
         
         # For one prototype
-        temp_dict = self._dict
-        self._list = list()
-        self._dict = dict()
-        for label, pt_list in temp_dict.items():
-            new_weight = 0
-            all_features = []
-            for pt in pt_list:
-                new_weight += pt.weight
-                all_features.append(pt.feature)
+        # temp_dict = self._dict
+        # self._list = list()
+        # self._dict = dict()
+        # for label, pt_list in temp_dict.items():
+        #     new_weight = 0
+        #     all_features = []
+        #     for pt in pt_list:
+        #         new_weight += pt.weight
+        #         all_features.append(pt.feature)
              
-            new_feature = torch.mean(torch.cat(all_features), dim=0).reshape(1, -1)
-            new_prototype = Prototypes.Prototype(new_feature, label, new_weight)
-            self._dict[label] = [new_prototype]
-        self._list = [item[0] for item in list(self._dict.values())]
+        #     new_feature = torch.mean(torch.cat(all_features), dim=0).reshape(1, -1)
+        #     new_prototype = Prototypes.Prototype(new_feature, label, new_weight)
+        #     self._dict[label] = [new_prototype]
+        # self._list = [item[0] for item in list(self._dict.values())]
 
 
 
