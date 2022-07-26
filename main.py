@@ -174,6 +174,7 @@ def stream(config, trainset, streamset):
         last_idx = 0
 
         for i, (image, label) in iter_streamloader:
+          sample = (image.squeeze(dim=0), label.squeeze(dim=0))
           with torch.no_grad():
             net.eval()
             image, label = image.to(net.device), label.item()
@@ -187,7 +188,7 @@ def stream(config, trainset, streamset):
             detection_results.append((label, predicted_label, real_novelty, detected_novelty))
 
           if detected_novelty:
-            sample = (image.squeeze(dim=0), label.squeeze(dim=0), feature)
+            # sample = (image.squeeze(dim=0), label.squeeze(dim=0), feature)
             buffer.append(sample)
 
           if (i+1) % 500 == 0:
