@@ -22,13 +22,13 @@ class Config:
         self.hidden_dims = args.hidden_dims
 
         # I added for OWR setting
-        self.n_tasks = args.n_tasks
-        self.mem_sel_type = args.mem_sel_type
-        self.mem_total_size = args.mem_total_size
-        self.mem_per_class = args.mem_per_class
-        self.mem_sel_method = args.mem_sel_method
-        self.split_train_path = args.split_train_path
-        self.split_test_path = args.split_test_path
+        # self.n_tasks = args.n_tasks
+        # self.mem_sel_type = args.mem_sel_type
+        # self.mem_total_size = args.mem_total_size
+        # self.mem_per_class = args.mem_per_class
+        # self.mem_sel_method = args.mem_sel_method
+        # self.split_train_path = args.split_train_path
+        # self.split_test_path = args.split_test_path
 
         # derived
         self.parameter_path = os.path.join(self.running_path, "parameter.json")
